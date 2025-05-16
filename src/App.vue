@@ -87,9 +87,11 @@ export default {
     const showHuman = ref(true);
 
     const { playAudio, playStreamAudio } = useAudioRender(dhIframe);
-    const iframeSrc = ref(
-      "https://open.xiling.baidu.com/cloud/realtime?mode=crop&textAssist=true&autoChromaKey=true&initMode=noAudio&cameraId=3&figureId=A2A_V2-fig-rd4mkz79idnhydu0&token=i-repjnpaq2g1j7/995c32ad2b383f8a6c3eddcb075e6f3cfd8239c307513aeafa6084fd5bae4435/2025-05-14T05:21:36.103Z"
-    );
+    const figure2D = "A2A_V2-xixi";
+    const figure3D = "A2A_V2-fig-rd4mkz79idnhydu0";
+    const url = "https://open.xiling.baidu.com/cloud/realtime";
+    const token = "i-repjnpaq2g1j7/d4317ddf74acd4564f12679751fc57f0510a1ce3cfdb98d773daf20ec14f9687/2025-05-21T05:36:05.342Z";
+    const iframeSrc = ref(`${url}?cp-autoAnimoji=true&mode=crop&textAssist=false&autoChromaKey=true&initMode=noAudio&cameraId=3&figureId=${figure3D}&token=${token}`);
 
     const onMessage = (msg) => {
       if (msg.origin === "https://open.xiling.baidu.com") {
@@ -303,7 +305,7 @@ export default {
   right: 4vw;
   overflow: hidden;
   text-align: start;
-  transform: scale(0.5);
+  transform: scale(0.8);
 }
 
 #digital-human-iframe {
