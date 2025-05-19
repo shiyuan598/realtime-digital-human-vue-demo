@@ -8,7 +8,8 @@
       </div>
     </div>
     <div class="button-wrapper">
-      <button @click="playWelcome">文本播报</button>
+      <textarea id="inputText" rows="10">{{ inputText }}</textarea>
+      <button @click="playText">文本播报</button>
       <button @click="playStreamText">流式文本播报</button>
       <button @click="playAudio">音频播报</button>
       <button @click="playStreamAudio">流式音频播报</button>
@@ -20,8 +21,8 @@
 </template>
 
 <script>
-import { onMounted, ref, watch } from "vue";
 import { v4 as uuidV4 } from "uuid";
+import { onMounted, ref, watch } from "vue";
 
 import DHIframe from "@bddh/starling-dhiframe";
 import useAudioRender from "./hooks/useAudioRender"; // 引入自定义 hook
@@ -85,13 +86,17 @@ export default {
     const showTimeoutTip = ref(false);
     const showLoadingPage = ref(false);
     const showHuman = ref(true);
+    const inputText = ref("1111");
 
     const { playAudio, playStreamAudio } = useAudioRender(dhIframe);
     const figure2D = "A2A_V2-xixi";
     const figure3D = "A2A_V2-fig-rd4mkz79idnhydu0";
     const url = "https://open.xiling.baidu.com/cloud/realtime";
-    const token = "i-repjnpaq2g1j7/d4317ddf74acd4564f12679751fc57f0510a1ce3cfdb98d773daf20ec14f9687/2025-05-21T05:36:05.342Z";
-    const iframeSrc = ref(`${url}?cp-autoAnimoji=true&mode=crop&textAssist=false&autoChromaKey=true&initMode=noAudio&cameraId=3&figureId=${figure3D}&token=${token}`);
+    const token =
+      "i-repjnpaq2g1j7/d4317ddf74acd4564f12679751fc57f0510a1ce3cfdb98d773daf20ec14f9687/2025-05-21T05:36:05.342Z";
+    const iframeSrc = ref(
+      `${url}?cp-autoAnimoji=true&mode=crop&textAssist=false&autoChromaKey=true&initMode=noAudio&cameraId=3&figureId=${figure3D}&token=${token}`
+    );
 
     const onMessage = (msg) => {
       if (msg.origin === "https://open.xiling.baidu.com") {
@@ -154,12 +159,23 @@ export default {
     const playWelcome = () => {
       dhIframe.sendMessage({
         action: "TEXT_RENDER",
-        body: "这是我的开场白自我介绍，我是数字人",
+        body: inputText.value || "这是我的开场白自我介绍，我是数字人",
+        requestId: commandId.value,
+      });
+    };
+
+    const playText = () => {
+      inputText.value = document.getElementById("inputText")?.value;
+      console.info("开始驱动文本:", inputText.value);
+      dhIframe.sendMessage({
+        action: "TEXT_RENDER",
+        body: inputText.value || "这是我的开场白自我介绍，我是数字人",
         requestId: commandId.value,
       });
     };
 
     const playStreamText = () => {
+      console.info("开始驱动流式文本");
       // 一轮流式驱动requestId必须使用同一个
       dhIframe.sendMessage({
         action: "TEXT_STREAM_RENDER",
@@ -272,6 +288,7 @@ export default {
       showLoadingPage,
       playWelcome,
       cancelMuted,
+      playText,
       playAudio,
       playStreamAudio,
       playStreamText,
@@ -295,6 +312,12 @@ export default {
   top: 10px;
   left: 10px;
   flex-wrap: wrap;
+}
+
+textarea {
+  width: 100%;
+  /* height: 100px;
+  resize: none; */
 }
 
 .iframe-wrapper {
@@ -326,7 +349,7 @@ export default {
   text-align: center;
   display: flex;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
 }
 
 .tip2 {
@@ -337,6 +360,6 @@ export default {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
 }
 </style>
